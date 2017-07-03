@@ -1,0 +1,19 @@
+---
+- name: Provisioning t2.micro EC2 Redhat instance
+  ec2: 
+    aws_access_key: "{{ aws_id }}"
+    aws_secret_key: "{{ aws_key }}"
+    region: "{{ aws_region }}"
+    image: "{{ aws_ec2_image }}"
+    instance_type: "{{ aws_ec2_type }}"
+    group: "{{ aws_sec_group_name }}"
+    key_name: "{{ aws_ec2_key }}" 
+    count: 1
+    wait: yes
+    wait_timeout: 600
+  register: hostinfo
+
+- copy: content="{{ hostinfo }}" dest=/home/test/playbooks/aws-project/temp/hostinfo
+
+- shell: sudo sh /home/test/playbooks/aws-project/scripts/get_hostinfo.sh
+

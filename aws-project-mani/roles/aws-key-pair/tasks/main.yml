@@ -1,0 +1,9 @@
+---
+- name: Generating ec2 key
+  ec2_key:
+    aws_access_key: "{{ aws_id }}"
+    aws_secret_key: "{{ aws_key }}"
+    region: "{{ aws_region }}"
+    name: "{{ aws_ec2_key }}"
+    key_material: "{{ item }}"
+  with_file: "{{ aws_ec2_pub_key }}"

@@ -1,0 +1,34 @@
+---
+- name: Connect to the remote host, execute yum updates
+  yum: name=* state=latest
+- name: Install the HTTPD Server
+  yum: name=httpd state=latest
+- name: Install the mod_ssl
+  yum: name=mod_ssl state=latest
+- name: Install the openssl
+  yum: name=openssl state=latest
+- name: Deploy the static website
+  copy: src=../files/index.html dest=/var/www/html/index.html owner=root group=root mode=0655 backup=yes
+- name: Restart the HTTPD Service
+  service: name=httpd state=restarted
+- name: Wait for the HTTP port 80 to be listening
+  wait_for: host={{ aws_ec2_hostname }} port=80 delay=5
+- name: Install WGET to test the site
+  yum: name=wget state=latest
+- name: Test the site
+  shell: /usr/bin/wget http://localhost
+  register: site_result
+- name: Generate private key and csr
+  shell: openssl req -nodes -newkey rsa:2048 -keyout /etc/pki/tls/private/example.key -out /etc/pki/tls/private/example.csr -subj "/C=GB/ST=US/L=US/O=Global Security/OU=IT Department/CN=example.com"
+- name: Generate Self Signed Key
+  shell: openssl x509 -req -days 365 -in /etc/pki/tls/private/example.csr -signkey /etc/pki/tls/private/example.key -out /etc/pki/tls/example.crt
+- name: reconfigure certs
+  shell: restorecon -RvF /etc/pki
+- name: replacing ssl.conf file
+  copy: src=../files/ssl.conf dest=/etc/httpd/conf.d/ssl.conf owner=root group=root mode=0655 backup=yes
+- name: replacing httpd.conf file
+  copy: src=../files/httpd.conf dest=/etc/httpd/conf/httpd.conf owner=root group=root mode=0655 backup=yes
+- name: Restart the HTTPD Service
+  service: name=httpd state=restarted
+- name: Display the site output results
+  debug: var=site_result

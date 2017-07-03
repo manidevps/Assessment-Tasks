@@ -1,0 +1,12 @@
+# Here are variables related to the deployment playbook
+
+aws_id: A****************Q
+aws_key: +r*******************n
+aws_region: us-west-2
+aws_ec2_type: t2.micro
+aws_ec2_image: ami-b55a51cc
+aws_default_vpc: vpc-ac8d63cb
+aws_sec_group_name: webserversecgrp
+aws_sec_group_dec: Webserver security group 
+aws_ec2_key: webserver_key
+aws_ec2_pub_key: /home/test/.ssh/id_rsa.pub

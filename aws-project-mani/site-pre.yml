@@ -1,0 +1,13 @@
+---
+# This playbook deploys a simple standalone JBoss server.
+
+
+- hosts: localhost
+  connection: local
+  remote_user: test
+  become: yes
+  gather_facts: no
+  roles:
+    - aws-key-pair
+    - aws-secgroup 
+    - aws-ec2
